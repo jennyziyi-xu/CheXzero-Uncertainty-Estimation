@@ -111,7 +111,7 @@ def zeroshot_classifier(classnames, templates, model, context_length=77):
     with torch.no_grad():
         zeroshot_weights = []
         # compute embedding through model for each class
-        for classname in tqdm(classnames):
+        for classname in classnames:
             texts = [template.format(classname) for template in templates] # format with class
             texts = clip.tokenize(texts, context_length=context_length) # tokenize
             class_embeddings = model.encode_text(texts) # embed with text encoder
@@ -145,7 +145,7 @@ def predict(loader, model, zeroshot_weights, softmax_eval=True, verbose=0):
     """
     y_pred = []
     with torch.no_grad():
-        for i, data in enumerate(tqdm(loader)):
+        for i, data in enumerate(loader):
             images = data['img']
 
             # predict
