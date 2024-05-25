@@ -14,17 +14,15 @@ import eval
 
 if __name__ == "__main__":
 
-    disease = 'Edema'
+    disease = 'consolidation'
 
     # Load in all predictions from one checkpoint. 
-    test_pred = np.load('/home/jex451/CheXzero/predictions/ensemble/chexpert_preds.npy')
+    test_pred =  np.load('/home/jex451/CheXzero/predictions/padchest_ensemble/padchest_preds.npy')
 
-    cxr_labels_all: List[str] = ['Atelectasis','Cardiomegaly', 
-                            'Consolidation', 'Edema', 'Enlarged Cardiomediastinum', 'Fracture', 'Lung Lesion',
-                            'Lung Opacity', 'No Finding','Pleural Effusion', 'Pleural Other', 'Pneumonia', 
-                            'Pneumothorax', 'Support Devices']
+    cxr_labels_all: List[str] = ['aortic atheromatosis', 'central venous catheter via jugular vein', 'minor fissure thickening', 'pneumoperitoneo', 'lytic bone lesion', 'loculated pleural effusion', 'chronic changes', 'nsg tube', 'pleural thickening', 'mastectomy', 'cavitation', 'clavicle fracture', 'mammary prosthesis', 'cardiomegaly', 'hiatal hernia', 'tuberculosis sequelae', 'pulmonary mass', 'osteosynthesis material', 'kyphosis', 'artificial heart valve', 'osteopenia', 'obesity', 'sternotomy', 'suboptimal study', 'alveolar pattern', 'atelectasis', 'granuloma', 'calcified granuloma', 'reservoir central venous catheter', 'subacromial space narrowing', 'pulmonary fibrosis', 'tuberculosis', 'endotracheal tube', 'gynecomastia', 'fibrotic band', 'cervical rib', 'calcified pleural thickening', 'hydropneumothorax', 'surgery neck', 'adenopathy', 'pulmonary hypertension', 'copd signs', 'artificial mitral heart valve', 'non axial articular degenerative changes', 'fissure thickening', 'artificial aortic heart valve', 'surgery lung', 'miliary opacities', 'vertebral degenerative changes', 'single chamber device', 'air trapping', 'calcified adenopathy', 'electrical device', 'volume loss', 'central venous catheter via umbilical vein', 'azygos lobe', 'calcified pleural plaques', 'consolidation', 'vascular hilar enlargement', 'bronchovascular markings', 'descendent aortic elongation', 'hyperinflated lung', 'blastic bone lesion', 'vertebral anterior compression', 'pseudonodule', 'increased density', 'lobar atelectasis', 'bone metastasis', 'abscess', 'bullas', 'osteoporosis', 'central venous catheter', 'hilar enlargement', 'air fluid level', 'surgery breast', 'scoliosis', 'central vascular redistribution', 'reticulonodular interstitial pattern', 'end on vessel', 'subcutaneous emphysema', 'multiple nodules', 'cyst', 'flattened diaphragm', 'atelectasis basal', 'soft tissue mass', 'external foreign body', 'tracheal shift', 'goiter', 'aortic aneurysm', 'mediastinal shift', 'hypoexpansion', 'vertebral compression', 'heart insufficiency', 'aortic button enlargement', 'costochondral junction hypertrophy', 'fracture', 'axial hyperostosis', 'superior mediastinal enlargement', 'mediastinic lipomatosis', 'humeral fracture', 'right sided aortic arch', 'chilaiditi sign', 'humeral prosthesis', 'sclerotic bone lesion', 'mass', 'reticular interstitial pattern', 'aortic elongation', 'suture material', 'laminar atelectasis', 'hilar congestion', 'vertebral fracture', 'pectum carinatum', 'unchanged', 'exclude', 'calcified densities', 'pacemaker', 'mediastinal mass', 'hemidiaphragm elevation', 'dual chamber device', 'ascendent aortic elongation', 'pneumothorax', 'dai', 'hypoexpansion basal', 'metal', 'pectum excavatum', 'pulmonary edema', 'kerley lines', 'tracheostomy tube', 'callus rib fracture', 'apical pleural thickening', 'round atelectasis', 'prosthesis', 'surgery heart', 'chest drain tube', 'nodule', 'pleural effusion', 'emphysema', 'surgery', 'thoracic cage deformation', 'supra aortic elongation', 'lymphangitis carcinomatosa', 'central venous catheter via subclavian vein', 'lung metastasis', 'infiltrates', 'diaphragmatic eventration', 'mediastinal enlargement', 'ventriculoperitoneal drain tube', 'ground glass pattern', 'vascular redistribution', 'post radiotherapy changes', 'double j stent', 'bronchiectasis', 'heart valve calcified', 'costophrenic angle blunting', 'interstitial pattern', 'pneumonia', 'nipple shadow', 'rib fracture', 'normal']
+
     # load in ground truth
-    cxr_true_labels_path: Optional[str] = '/home/jex451/CheXzero/data/groundtruth.csv'
+    cxr_true_labels_path: Optional[str] = '../../data/padchest/2_cxr_labels.csv'
 
     disease_index = cxr_labels_all.index(disease)
 
@@ -36,7 +34,7 @@ if __name__ == "__main__":
     test_true_disease = zero_shot.make_true_labels(cxr_true_labels_path=cxr_true_labels_path, cxr_labels=[disease])
 
     # create the x-axis, from 0 to 50 with step size 2.
-    x_axis = np.arange(0,int(0.5 * total_samples),2) / 5
+    x_axis = np.arange(0,int(0.5 * total_samples),10) / total_samples * 100 
     
     sns.set_theme(style="darkgrid")
     plt.figure(figsize=(5, 6))   ### TODO: adjust the plot size.
@@ -53,7 +51,9 @@ if __name__ == "__main__":
 
     middle_index = total_samples // 2
     i=0
+    print("line 54")
     while i < 0.5 * total_samples:
+        
         # remove the middle elements. Calculate the AUC for the non-removed part. 
         remove_indices = [x[0] for x in test_pred_sorted[(middle_index-i//2):middle_index+i//2]]
 
@@ -69,9 +69,8 @@ if __name__ == "__main__":
         # boot_results =eval.bootstrap_custom(new_test_pred.reshape(-1, 1), new_test_true.reshape(-1,1), [disease])
 
         # auc_array.extend(boot_results)
-        i+=2
+        i+=10
         
-    # x_axis = x_axis.repeat(1000)
 
     sns.lineplot(x = x_axis, y= auc_array, color='blue', label='Median Removal')
 
@@ -104,11 +103,11 @@ if __name__ == "__main__":
     #######################
     ## Monte Carlo Dropout
 
-    pred_dir = '/home/jex451/CheXzero/predictions/chexpert_MCD/'
+    pred_dir = '/home/jex451/CheXzero/predictions/padchest_MCD/'
 
     all_preds = np.array([])
     for i in range(1, 31):
-        test_pred = np.load(pred_dir + "chexpert_preds_{}.npy".format(i))
+        test_pred = np.load(pred_dir + "padchest_preds_{}.npy".format(i))
         n,m  = test_pred.shape
         if len(all_preds) == 0:
             all_preds = test_pred.reshape((1,n,m))
@@ -140,7 +139,7 @@ if __name__ == "__main__":
 
     # plt.xlabel("Percentage of filtered out samples")
     # plt.ylabel("AUC")
-    plt.title(disease + " - CheXpert")
-    plt.savefig(disease+"_chexpert.png")
+    plt.title(disease + " - PadChest")
+    plt.savefig(disease+"_padchest.png")
         
  
