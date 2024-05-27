@@ -14,7 +14,7 @@ import eval
 
 if __name__ == "__main__":
 
-    disease = 'consolidation'
+    disease = 'pulmonary edema'
 
     # Load in all predictions from one checkpoint. 
     test_pred =  np.load('/home/jex451/CheXzero/predictions/padchest_ensemble/padchest_preds.npy')
@@ -51,7 +51,6 @@ if __name__ == "__main__":
 
     middle_index = total_samples // 2
     i=0
-    print("line 54")
     while i < 0.5 * total_samples:
         
         # remove the middle elements. Calculate the AUC for the non-removed part. 
@@ -64,11 +63,6 @@ if __name__ == "__main__":
         # using 1 evaluation
         result = eval.evaluate(new_test_pred.reshape(-1, 1), new_test_true.reshape(-1,1), [disease])
         auc_array.append(result.at[0, disease+'_auc'])
-
-        # using bootstrap
-        # boot_results =eval.bootstrap_custom(new_test_pred.reshape(-1, 1), new_test_true.reshape(-1,1), [disease])
-
-        # auc_array.extend(boot_results)
         i+=10
         
 
@@ -134,12 +128,11 @@ if __name__ == "__main__":
         auc_array.append(result.at[0, disease+'_auc'])
 
     x_axis = np.arange(0,51,2)
-    sns.lineplot(x = x_axis, y= auc_array, color="green", label='MCD')
+    mcd_plot = sns.lineplot(x = x_axis, y= auc_array, color="green", label='MCD')
+    # Remove legends. 
+    mcd_plot.legend_.remove()
 
-
-    # plt.xlabel("Percentage of filtered out samples")
-    # plt.ylabel("AUC")
     plt.title(disease + " - PadChest")
-    plt.savefig(disease+"_padchest.png")
+    plt.savefig(disease+"_padchest_2.png")
         
  

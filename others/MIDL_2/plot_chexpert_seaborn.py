@@ -14,7 +14,7 @@ import eval
 
 if __name__ == "__main__":
 
-    disease = 'Edema'
+    disease = 'Pleural Effusion'
 
     # Load in all predictions from one checkpoint. 
     test_pred = np.load('/home/jex451/CheXzero/predictions/ensemble/chexpert_preds.npy')
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     x_axis = np.arange(0,int(0.5 * total_samples),2) / 5
     
     sns.set_theme(style="darkgrid")
-    plt.figure(figsize=(5, 6))   ### TODO: adjust the plot size.
+    plt.figure(figsize=(5, 6))   
 
 
     #######################
@@ -65,13 +65,7 @@ if __name__ == "__main__":
         result = eval.evaluate(new_test_pred.reshape(-1, 1), new_test_true.reshape(-1,1), [disease])
         auc_array.append(result.at[0, disease+'_auc'])
 
-        # using bootstrap
-        # boot_results =eval.bootstrap_custom(new_test_pred.reshape(-1, 1), new_test_true.reshape(-1,1), [disease])
-
-        # auc_array.extend(boot_results)
         i+=2
-        
-    # x_axis = x_axis.repeat(1000)
 
     sns.lineplot(x = x_axis, y= auc_array, color='blue', label='Median Removal')
 
@@ -115,13 +109,14 @@ if __name__ == "__main__":
         else:
             all_preds = np.concatenate((all_preds, test_pred.reshape((1,n,m))), axis=0)
       
-    # compute variance and mean 
+    # compute variance
     std_all = np.std(all_preds, axis=0)
     std_disease = std_all[:, disease_index]
 
     auc_array = []
 
-    for t in range(0, 51, 2):
+
+    for t in range(0,51,2):
         # filter out t% of samples with highest variance 
         threshold = np.percentile(std_disease, 100 - t)
         filter_array = std_disease < threshold
@@ -129,18 +124,13 @@ if __name__ == "__main__":
         # filter out highest variance
         mc_pred = test_pred_disease[filter_array]
         mc_true = test_true_disease[filter_array]
-
         # evaluate model 
         result = eval.evaluate(mc_pred.reshape(-1, 1), mc_true.reshape(-1,1), [disease])
         auc_array.append(result.at[0, disease+'_auc'])
 
     x_axis = np.arange(0,51,2)
-    sns.lineplot(x = x_axis, y= auc_array, color="green", label='MCD')
+    mcd_plot = sns.lineplot(x = x_axis, y= auc_array, color="green", label='MCD')
+    mcd_plot.legend_.remove()
 
-
-    # plt.xlabel("Percentage of filtered out samples")
-    # plt.ylabel("AUC")
     plt.title(disease + " - CheXpert")
-    plt.savefig(disease+"_chexpert.png")
-        
- 
+    plt.savefig(disease+"_chexpert_2.png")
