@@ -71,7 +71,7 @@ if __name__ == "__main__":
     cxr_filepath: str = '../data/chexpert_test.h5' # filepath of chest x-ray images (.h5)
     cxr_true_labels_path: Optional[str] = '../data/groundtruth.csv' # (optional for evaluation) if labels are provided, provide path
     model_dir: str = '../checkpoints/chexzero_weights' # where pretrained models are saved (.pt) 
-    predictions_dir: Path = Path('../predictions') # where to save predictions
+    predictions_dir: Path = Path('../predictions/ensemble') # where to save predictions
     cache_dir: str = predictions_dir / "cached" # where to cache ensembled predictions
 
     context_length: int = 77

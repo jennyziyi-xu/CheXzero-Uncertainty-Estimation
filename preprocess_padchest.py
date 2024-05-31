@@ -44,11 +44,12 @@ def preprocess_data(data_root):
     # multihot encoding for localizations
     unique_loc = get_unique_labels(loc_2_df, column="Labels")
     df_loc = create_multi_hot_labels(loc_2_df, unique_loc, column="Labels")
-    directory = 'data/padchest/images/'
-    cxr_paths = get_paths(directory)
-    write_h5(cxr_paths)
-    unique_labels = np.load('unique_labels.npy')
-    return unique_labels[0:1]
+    # directory = 'data/padchest/images/    # comment out
+    cxr_paths = get_paths(os.path.join(data_root, '2'))
+    write_h5(cxr_paths, df_loc)
+    # unique_labels = np.load('unique_labels.npy')   #  comment out 
+    # return unique_labels[0:1]    # comment out 
+    return
 
 def extract_filenames(txt_path): 
     """
@@ -194,33 +195,35 @@ def img_to_h5(
         
     return proper_cxr_paths
 
-def write_h5(cxr_paths, resolution: int = 320):
-    out_filepath = 'data/padchest/images/2_cxr_dset_sample.h5'
+def write_h5(cxr_paths, df_lab, resolution: int = 320):
+    # out_filepath = 'data/padchest/images/2_cxr_dset_sample.h5'
     dset_size = len(cxr_paths)
 
     proper_cxr_paths = []
-    with h5py.File(out_filepath,'w') as h5f:
-        img_dset = h5f.create_dataset('cxr', shape=(2978, resolution, resolution)) # todo: replace magic number with actual number
-    #         print('Dataset initialized.')
+    for idx, path in enumerate(tqdm(cxr_paths)):
+        proper_cxr_paths.append(path)
+    # with h5py.File(out_filepath,'w') as h5f:
+    #     img_dset = h5f.create_dataset('cxr', shape=(2978, resolution, resolution)) # todo: replace magic number with actual number
+    # #         print('Dataset initialized.')
 
-        ctr = 0
-        for idx, path in enumerate(tqdm(cxr_paths)):
-            try: 
-                # read image using cv2
-                img = cv2.imread(path)
-                # convert to PIL Image object
-                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                img_pil = Image.fromarray(img)
-                # preprocess
-                img = preprocess(img_pil, desired_size=resolution)     
-                plt.imshow(img)
-                img_dset[ctr] = img
-                ctr += 1
-                proper_cxr_paths.append(path)
-            except: 
-                print("failed!")
-                continue
-        print(h5f)
+    #     ctr = 0
+    #     for idx, path in enumerate(tqdm(cxr_paths)):
+    #         try: 
+    #             # read image using cv2
+    #             img = cv2.imread(path)
+    #             # convert to PIL Image object
+    #             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    #             img_pil = Image.fromarray(img)
+    #             # preprocess
+    #             img = preprocess(img_pil, desired_size=resolution)     
+    #             plt.imshow(img)
+    #             img_dset[ctr] = img
+    #             ctr += 1
+    #             proper_cxr_paths.append(path)
+    #         except: 
+    #             print("failed!")
+    #             continue
+    #     print(h5f)
     np.save("proper_cxr_paths.npy", np.array(proper_cxr_paths))
     out_filepath = 'data/padchest/images/2_cxr.h5'
     img_to_hdf5(cxr_paths, out_filepath, resolution=320)
@@ -236,5 +239,9 @@ def order_labels(df, cxr_paths):
     for path in cxr_paths: 
         imageId = path.split('/')[-1]
         row = df.loc[df['ImageID'] == imageId]
-        df_new = df_new.append(row)
+        # df_new = df_new.append(row)
+        df_new = pd.concat([df_new, row])
     return df_new
+
+if __name__ == "__main__":
+    preprocess_data("/n/data1/hms/dbmi/rajpurkar/lab/datasets/cxr/PadChest/raw/PADCHEST_SJ/image_zips")

@@ -15,6 +15,8 @@ import eval
 if __name__ == "__main__":
 
     cxr_true_labels_path: Optional[str] = '../data/groundtruth.csv' # (optional for evaluation) if labels are provided, provide path
+    cxr_result_path = '../results/original.csv' 
+    bootstrap_result_path = '../results/original_bootstrap.csv' 
 
     # ------- LABELS ------  #
     # Define labels to query each image | will return a prediction for each label
@@ -25,7 +27,7 @@ if __name__ == "__main__":
 
     # loads in ground truth labels into memory
 
-    test_pred = np.load('/home/jex451/CheXzero/predictions/chexpert_preds.npy')
+    test_pred = np.load('/home/jex451/CheXzero/predictions/ensemble/chexpert_preds.npy')
     test_true = zero_shot.make_true_labels(cxr_true_labels_path=cxr_true_labels_path, cxr_labels=cxr_labels)
 
     # evaluate model, no bootstrap
@@ -36,3 +38,7 @@ if __name__ == "__main__":
 
     # print results with confidence intervals
     print(bootstrap_results[1])
+
+    # Save to csv
+    cxr_results.to_csv(cxr_result_path)
+    bootstrap_results[1].to_csv(bootstrap_result_path)
