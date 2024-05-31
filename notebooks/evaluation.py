@@ -37,8 +37,8 @@ if __name__ == "__main__":
     bootstrap_results: Tuple[pd.DataFrame, pd.DataFrame] = eval.bootstrap(test_pred, test_true, cxr_labels) # (df of results for each bootstrap, df of CI)
 
     # print results with confidence intervals
-    # print(bootstrap_results[1])
+    print(bootstrap_results[1])
 
     # Save to csv
-    # cxr_results.to_csv(cxr_result_path)
-    # bootstrap_results[1].to_csv(bootstrap_result_path)
+    cxr_results.to_csv(cxr_result_path)
+    bootstrap_results[1].to_csv(bootstrap_result_path)

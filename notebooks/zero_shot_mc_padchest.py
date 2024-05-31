@@ -11,21 +11,6 @@ from eval import evaluate, bootstrap
 from zero_shot import make, make_true_labels, run_softmax_eval
 
 import torch.nn.utils.prune as prune
-# from prettytable import PrettyTable
-
-
-# def count_parameters(model):
-#     table = PrettyTable(["Modules", "Parameters"])
-#     total_params = 0
-#     for name, parameter in model.named_parameters():
-#         if not parameter.requires_grad: 
-#             continue
-#         param = parameter.numel()
-#         table.add_row([name, param])
-#         total_params+=param
-#     print(table)
-#     print(f"Total Trainable Params: {total_params}")
-#     return total_params
 
 ## Run the model on the data set using ensembled models
 def ensemble_models(
@@ -74,7 +59,7 @@ def ensemble_models(
 
 if __name__ == "__main__":
 
-    for iter in range(17,31):
+    for iter in range(1,31):
 
         # ----- DIRECTORIES ------ #
         cxr_filepath: str = '../data/padchest/images/2_cxr.h5' # filepath of chest x-ray images (.h5)
