@@ -59,7 +59,7 @@ def ensemble_models(
 
 if __name__ == "__main__":
 
-    for iter in range(30, 31):
+    for iter in range(1, 31):
 
         # ----- DIRECTORIES ------ #
         cxr_filepath: str = '../data/chexpert_test.h5' # filepath of chest x-ray images (.h5)

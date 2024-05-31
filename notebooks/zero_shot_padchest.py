@@ -70,8 +70,8 @@ if __name__ == "__main__":
     # ----- DIRECTORIES ------ #
     cxr_filepath: str = '../data/padchest/images/2_cxr.h5' # filepath of chest x-ray images (.h5)
     cxr_true_labels_path: Optional[str] = '../data/padchest/2_cxr_labels.csv' # (optional for evaluation) if labels are provided, provide path
-    model_dir: str = '../checkpoints/one_weight' # where pretrained models are saved (.pt) 
-    predictions_dir: Path = Path('../predictions/padchest') # where to save predictions
+    model_dir: str = '../checkpoints/chexzero_weights' # where pretrained models are saved (.pt) 
+    predictions_dir: Path = Path('../predictions/padchest_ensemble') # where to save predictions
     cache_dir: str = predictions_dir / "cached" # where to cache ensembled predictions
 
     context_length: int = 77
@@ -103,6 +103,6 @@ if __name__ == "__main__":
     )
 
     # save averaged preds
-    pred_name = "chexpert_preds.npy" # add name of preds
+    pred_name = "padchest_preds.npy" # add name of preds
     predictions_dir = predictions_dir / pred_name
     np.save(file=predictions_dir, arr=y_pred_avg)

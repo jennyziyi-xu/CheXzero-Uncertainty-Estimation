@@ -9,17 +9,17 @@ sys.path.append('../../')
 import zero_shot
 import eval
 
+# /home/jex451/.conda/envs/chexzero2/bin/python chexpert_prob_vs_acc.py --batch_size=50 "Pleural Effusion" "Atelectasis" "Cardiomegaly" "Consolidation" "Edema"
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
     
     parser.add_argument('--batch_size', type=int)
+    parser.add_argument('--plot', type=bool)
     parser.add_argument('condition', nargs='*', help="Pleural Effusion, etc. .")
     args = parser.parse_args()
     return args
-
-def sort_by_indexes(lst, indexes, reverse=False):
-  return [val for (_, val) in sorted(zip(indexes, lst), key=lambda x: \
-          x[0], reverse=reverse)]
 
 if __name__ == "__main__":
 
@@ -51,20 +51,14 @@ if __name__ == "__main__":
         cxr_labels = [condition]
         test_true = zero_shot.make_true_labels(cxr_true_labels_path=cxr_true_labels_path, cxr_labels=cxr_labels)
 
-        # Sort probabilities in terms of their probabilities, keep the indices. 
-        test_pred_condition_dict = dict(enumerate(test_pred_condition))
-        test_pred_condition_sorted = sorted(test_pred_condition_dict.items(), key=lambda test_pred_condition_dict: test_pred_condition_dict[1])
+        # Sort according to prediction probabilities. 
+        both_lists = zip(test_pred_condition, test_true)
+        both_lists_sorted = sorted(both_lists, key=lambda x:x[0])
 
-        sort_indices = []
-        condition_probs = []
-        for item in test_pred_condition_sorted:
-            sort_indices.append(item[0])
-            condition_probs.append(item[1])
+        condition_probs = [val for (val, _) in both_lists_sorted]
+        test_true_sorted = [val for (_, val) in both_lists_sorted]
 
-        # Use the indices to sort the true labels too. 
-        test_true_sorted = sort_by_indexes(test_true, sort_indices)
-
-        n = len(test_pred_condition_sorted)
+        n = len(condition_probs)
         test_pred_condition_sorted = np.array(condition_probs).reshape(n, 1)
         test_true_sorted = np.array(test_true_sorted).reshape(n, 1)
 
@@ -81,12 +75,19 @@ if __name__ == "__main__":
             cxr_results: pd.DataFrame = eval.evaluate(probs_slice, test_slice, cxr_labels)
             y_axis.append(cxr_results.at[0, condition+'_auc'])
         
-        print(len(y_axis))
-        plt.figure()
-        plt.xlabel("Mean probability for the batch")
-        plt.ylabel("batch AUC")
-        plt.title("chexpert- {} \n -Relationship between probabilities and AUC in batches of {}".format(condition, args.batch_size))
-        # plt.plot(x_axis, y_axis)
-        plt.scatter(x_axis, y_axis)
-        plt.savefig("chexpert_{}_probs_vs_auc.png".format(condition))
+        print(y_axis)
+        for i in range(len(y_axis)):
+            if np.isnan(y_axis[i]):
+                y_axis[i] = 0
+        
+        print(y_axis)
+
+        if (args.plot):
+            plt.figure()
+            plt.xlabel("Mean probability for the batch")
+            plt.ylabel("batch AUC")
+            plt.title("chexpert- {} \n -Relationship between probabilities and AUC in batches of {}".format(condition, args.batch_size))
+            # plt.plot(x_axis, y_axis)
+            plt.scatter(x_axis, y_axis)
+            plt.savefig("chexpert3_{}_probs_vs_auc.png".format(condition))
         
