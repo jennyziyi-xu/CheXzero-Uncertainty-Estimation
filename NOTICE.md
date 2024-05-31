@@ -1,14 +1,19 @@
-# Notices for CheXzero
+# Notices for the Source Code
 This software incorporates material from third parties. 
 
 ## Project Licenses
-The source code of this repository was derived from CLIP developed by OpenAI (https://github.com/openai/CLIP). This work uses and modifies code that defines the CLIP model architecture, preprocesses unstructured text, and runs inference. 
+The source code of this repository was derived from [CheXzero](https://github.com/rajpurkarlab/CheXzero). The changes from the CheXzero repo are listed below: 
+
+* `notebooks/zero_shot_padchest.py` to support zero-shot inference on PadChest dataset. 
+* `notebooks/zero_shot_mc_chexpert.py` and `notebooks/zero_shot_mc_padchest.py` for zero-shot inference with Monte Carlo Dropout. 
+* `plot_scripts/plot_chexpert_UQ.py` and `plot_scripts/plot_padchest_UQ.py` for visualizing the results of the three uncertainty quantification methods. 
+
 
 ### Open Source License / Copyright Notice
 ```
 MIT License
 
-Copyright (c) 2021 OpenAI
+Copyright (c) 2022 Rajpurkar Lab
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
