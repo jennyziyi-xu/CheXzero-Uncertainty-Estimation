@@ -1,7 +1,7 @@
 # Calibration and Uncertainty Estimation Challenges in Self-Supervised Chest X-ray Pathology Classification Models
 Jenny Xu, Pranav Rajpurkar. \
 2024 Medical Imaging with Deep Learning, Paris, France. \
-arxiv link to be added. 
+[https://openreview.net/pdf?id=PfCY5BLNHc](https://openreview.net/pdf?id=PfCY5BLNHc) 
 
 This repository is based off [CheXzero](https://github.com/rajpurkarlab/CheXzero).  
 
