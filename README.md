@@ -3,7 +3,6 @@ Jenny Xu, Pranav Rajpurkar. \
 2024 Medical Imaging with Deep Learning, Paris, France. \
 [https://openreview.net/pdf?id=PfCY5BLNHc](https://openreview.net/pdf?id=PfCY5BLNHc) 
 
-This repository is based off [CheXzero](https://github.com/rajpurkarlab/CheXzero).  
 
 ## Overview
 - [Abstract](#abstract)
